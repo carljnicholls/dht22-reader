@@ -42,7 +42,7 @@ export class Dht22SensorReader {
 
                 client.subscribe(
                     this.settings.topic, 
-                    async (error: Error) => this.onSubscribeToClient(error, client)
+                    async (error: Error) => await this.onSubscribeToClient(error, client)
                 );
             });
 
@@ -65,25 +65,40 @@ export class Dht22SensorReader {
      * Checks error and sets an interval for sensor checks and publishing results
     */
     private async onSubscribeToClient(error: Error, client: mqtt.Client): Promise<void> {
-        this.logger.debug(`${this.className}.push.connect.subscribe`);
+        try {
+            this.logger.debug(`${this.className}.onSubscribeToClient`);
 
-        if(error != undefined) {
-            this.logger.error(`Error subscribing to topic ${this.settings.topic}`, error)
-            return;
+            if(error != undefined) {
+                this.logger.error(`Error subscribing to topic ${this.settings.topic}`, error)
+                throw error;
+            }
+
+            this.intervalCallback = setInterval(async () => this.onInterval(client), this.intervalTimeout);
+        
+        } catch (error) {
+            this.logger.error(`${this.className}.onSubscribeToClient.error`, error); 
+            throw error;
         }
-
-        this.intervalCallback = setInterval(async () => this.onInterval(client), this.intervalTimeout);
     }
 
     /**
      * Reads the sensor and publishes its response to mqtt broker
      */
     private async onInterval(client: mqtt.Client): Promise<void> {
-        this.logger.debug(`${this.className}.push.connect.subscribe.setInterval`);
-        const result = await sensor.read(this.sensorType, this.settings.pin) as SensorMessageDto;
-        
-        const mqttMessage = JSON.stringify(result);
-        this.logger.info(`${this.className}.push.connect.subscribe.publish`, mqttMessage);
-        client.publish(this.settings.topic, mqttMessage);
+        try {
+            this.logger.debug(`${this.className}.onInterval`);
+            const result = await sensor.read(this.sensorType, this.settings.pin) as SensorMessageDto;
+            
+            const mqttMessage = JSON.stringify({
+                temperature: result.temperature.toFixed(2),
+                humidity: result.humidity.toFixed(2)
+            });
+            this.logger.info(`${this.className}.onInterval.publish`, { mqttMessage });
+            client.publish(this.settings.topic, mqttMessage);
+
+        } catch (error) {
+            this.logger.error(`${this.className}.onInterval.error`, error); 
+            throw error;
+        }
     }
 }
