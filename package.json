@@ -1,0 +1,29 @@
+{
+  "name": "dht22-reader",
+  "version": "1.0.0",
+  "description": "This Console Application takes string params to automate tasks. The first command should be the task with any addition values following.",
+  "main": "/build/src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "CJN",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "moment": "^2.26.0",
+    "mqtt": "^4.1.0",
+    "node-dht-sensor": "^0.4.2",
+    "tslib": "^2.0.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.25",
+    "@types/jest-expect-message": "^1.0.1",
+    "@types/node": "^13.1.1",
+    "jest": "^24.9.0",
+    "jest-each": "^24.9.0",
+    "jest-expect-message": "^1.0.2",
+    "ts-jest": "^24.2.0",
+    "typescript": "^3.7.4"
+  }
+}
