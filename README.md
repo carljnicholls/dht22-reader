@@ -1,4 +1,4 @@
-# Win 10 Automation 
+# DHT22 Reader
 
 This Service is part of a collection running on a Raspberry Pi. It reads from a DHT22 sensor periodically and and publishes the response to a MQTT broker.
 
